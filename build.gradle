@@ -50,7 +50,6 @@ test {
           '-XX:-UseSplitVerifier'
   )
 
-  ignoreFailures = true
 }
 
 tasks.sonarRunner {
