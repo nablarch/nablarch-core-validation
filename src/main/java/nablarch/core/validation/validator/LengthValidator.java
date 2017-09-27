@@ -73,6 +73,9 @@ public class LengthValidator extends StringValidatorSupport<Length> {
             Object propertyDisplayName, Length length, String value) {
         // 文字列長 0 は @Required で防ぐ前提であるため、無条件で許可する
         // 例えば文字列長が 0 (入力なし) または 8 のみを許可するために使用する
+        if (value == null) {
+            return true;
+        }
         if (length.min() > 0 && value.length() != 0) {
             if (value.length() < length.min()) {
                 addMessage(context, propertyName, propertyDisplayName, length);

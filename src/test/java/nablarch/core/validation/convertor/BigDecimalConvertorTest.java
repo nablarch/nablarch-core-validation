@@ -1,14 +1,12 @@
 package nablarch.core.validation.convertor;
 
-import nablarch.core.ThreadContext;
-import nablarch.core.message.MockStringResourceHolder;
-import nablarch.core.validation.ValidationContext;
-import nablarch.core.validation.creator.ReflectionFormCreator;
-import nablarch.test.support.SystemRepositoryResource;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -16,13 +14,20 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import nablarch.core.ThreadContext;
+import nablarch.core.message.MockStringResourceHolder;
+import nablarch.core.validation.ValidationContext;
+import nablarch.core.validation.creator.ReflectionFormCreator;
+import nablarch.test.support.SystemRepositoryResource;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class BigDecimalConvertorTest {
 
-    private BigDecimalConvertor testee;
-    private static MockStringResourceHolder resource;
+    private BigDecimalConvertor testee = new BigDecimalConvertor();
 
     @ClassRule
     public static SystemRepositoryResource repo = new SystemRepositoryResource("nablarch/core/validation/convertor-test-base.xml");
@@ -38,18 +43,16 @@ public class BigDecimalConvertorTest {
 
     @BeforeClass
     public static void setUpClass() {
-        resource = repo.getComponentByType(MockStringResourceHolder.class);
-        resource.setMessages(MESSAGES);
+        final MockStringResourceHolder mockStringResourceHolder = new MockStringResourceHolder();
+        mockStringResourceHolder.setMessages(MESSAGES);
+        repo.addComponent("stringResourceHolder", mockStringResourceHolder);
     }
 
     @Before
     public void setUp() {
-        testee = new BigDecimalConvertor();
         testee.setMultiInputMessageId("MSG00001");
         testee.setInvalidDigitsFractionMessageId("MSG00002");
         testee.setInvalidDigitsIntegerMessageId("MSG00003");
-
-        // デフォルト動作としてnullは許可しない
         testee.setAllowNullValue(false);
     }
 
@@ -84,8 +87,7 @@ public class BigDecimalConvertorTest {
         params.put("param", new String[]{"10"});
 
         ValidationContext<TestTarget> context = new ValidationContext<TestTarget>(
-                "", TestTarget.class, new ReflectionFormCreator(),
-                params, "");
+                "", TestTarget.class, new ReflectionFormCreator(), params, "");
 
         assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[]{"10"}, digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[]{"10.01"}, digits));
@@ -109,8 +111,8 @@ public class BigDecimalConvertorTest {
         assertTrue(testee.isConvertible(context, "param", "PROP0001", new Integer("-10"), digits));
 
         // nullを指定した場合
-        assertFalse(testee.isConvertible(context, "param", "PROP0001", null,
-                digits));
+        assertFalse(testee.isConvertible(context, "param", "PROP0001", null, digits));
+        assertFalse(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, digits));
     }
 
     @Test
@@ -272,8 +274,8 @@ public class BigDecimalConvertorTest {
                 new Integer("-10"), digits));
 
         // nullを指定した場合
-        assertTrue(testee.isConvertible(context, "param", "PROP0001", null,
-                digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", null, digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, digits));
     }
 
     @Test
@@ -539,6 +541,16 @@ public class BigDecimalConvertorTest {
         ValidationContext<TestTarget> context = new ValidationContext<TestTarget>(
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
+
+        //**********************************************************************
+        // nullを指定
+        //**********************************************************************
+        assertNull(testee.convert(context, "param", null, null));
+        assertNull(testee.convert(context, "param", new String[] {null}, null));
+
+        //**********************************************************************
+        // String配列を指定
+        //**********************************************************************
         assertEquals(new BigDecimal("10"), testee.convert(context, "param", new String[]{"10"}, null));
         assertEquals(new BigDecimal("10000"), testee.convert(context, "param", new String[]{"10,000"}, null));
         assertEquals(new BigDecimal(".01"), testee.convert(context, "param", new String[]{".01"}, null));

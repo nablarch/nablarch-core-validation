@@ -1,18 +1,20 @@
 package nablarch.core.validation.convertor;
 
-import nablarch.core.message.MockStringResourceHolder;
-import nablarch.core.repository.SystemRepository;
-import nablarch.core.repository.di.DiContainer;
-import nablarch.core.repository.di.config.xml.XmlComponentDefinitionLoader;
-import nablarch.core.validation.ValidationContext;
-import nablarch.core.validation.creator.ReflectionFormCreator;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import nablarch.core.message.MockStringResourceHolder;
+import nablarch.core.validation.ValidationContext;
+import nablarch.core.validation.creator.ReflectionFormCreator;
+import nablarch.test.support.SystemRepositoryResource;
+
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 /**
  * {@link BooleanConvertor}のテストを行います。
@@ -20,9 +22,12 @@ import static org.junit.Assert.*;
  * @author TIS
  */
 public class BooleanConvertorTest {
+
     private static BooleanConvertor testee;
 
-    private static MockStringResourceHolder resource;
+    @ClassRule
+    public static SystemRepositoryResource systemRepositoryResource = new SystemRepositoryResource(
+            "nablarch/core/validation/convertor-test-base.xml");
 
     private static final String[][] MESSAGES = {
             {"MSG00001", "ja", "{0}が正しくありません。", "en", "value of {0} is not valid."},
@@ -32,13 +37,11 @@ public class BooleanConvertorTest {
 
     @BeforeClass
     public static void setUpClass() {
-        XmlComponentDefinitionLoader loader = new XmlComponentDefinitionLoader(
-                "nablarch/core/validation/convertor-test-base.xml");
-        DiContainer container = new DiContainer(loader);
-        SystemRepository.load(container);
-
-        resource = container.getComponentByType(MockStringResourceHolder.class);
+        MockStringResourceHolder resource = new MockStringResourceHolder();
         resource.setMessages(MESSAGES);
+
+        systemRepositoryResource.addComponent("stringResourceHolder", resource);
+        
         testee = new BooleanConvertor();
         testee.setConversionFailedMessageId("MSG00001");
     }
@@ -82,14 +85,14 @@ public class BooleanConvertorTest {
             
             // nullは不許可
             testee.setAllowNullValue(false);
-            assertFalse(testee.isConvertible(context, "param", "PROP0001", null,
-                    null));
+            assertFalse(testee.isConvertible(context, "param", "PROP0001", null, null));
+            assertFalse(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, null));
             
             // nullは許可(デフォルト動作)
             testee = new BooleanConvertor();
             testee.setConversionFailedMessageId("MSG00001");
-            assertTrue(testee.isConvertible(context, "param", "PROP0001", null,
-                    null));
+            assertTrue(testee.isConvertible(context, "param", "PROP0001", null, null));
+            assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, null));
             
             // 空の文字列配列はNG
             assertFalse(testee.isConvertible(context, "param", "PROP0001",
@@ -124,6 +127,8 @@ public class BooleanConvertorTest {
             assertEquals(Boolean.class, testee.getTargetClass());
             assertTrue((Boolean)testee.convert(context, "param", "true", null));
             assertFalse((Boolean)testee.convert(context, "param", "false", null));
+            assertTrue((Boolean)testee.convert(context, "param", true, null));
+            assertFalse((Boolean)testee.convert(context, "param", false, null));
             assertTrue((Boolean)testee.convert(context, "param", new String[]{"true"}, null));
             assertFalse((Boolean)testee.convert(context, "param", new String[]{"false"}, null));
             
@@ -131,6 +136,7 @@ public class BooleanConvertorTest {
             assertFalse((Boolean)testee.convert(context, "param", "hoge", null));
             assertFalse((Boolean)testee.convert(context, "param", new String[]{"hoge"}, null));
             assertFalse((Boolean)testee.convert(context, "param", null, null));
+            assertFalse((Boolean) testee.convert(context, "param", new String[] {null}, null));
         }
     }
 }

@@ -116,19 +116,15 @@ public abstract class NumberConvertorSupport implements Convertor {
     public <T> boolean isConvertible(ValidationContext<T> context,
             String propertyName, Object propertyDisplayName, Object value,
             Annotation format) {
+
         // チェック対象の値の型が正しいか
-        boolean isConvertibleType
-                = (value == null && allowNullValue)
-               || (value instanceof Number)
-               || (value instanceof String)
-               || (value instanceof String[] && ((String[]) value).length == 1);
-        if (!isConvertibleType) {
+        if (!isConvertible(value)) {
             ValidationResultMessageUtil.addResultMessage(context, propertyName,
                     multiInputMessageId, propertyDisplayName);
             return false;
         }
 
-        if (value == null) {
+        if (isNullValue(value)) {
             // nullの場合は以降の処理は行わない。
             // nullを許可している場合のみ、ここまで処理がくる。
             return true;
@@ -151,6 +147,55 @@ public abstract class NumberConvertorSupport implements Convertor {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 値がnullかどうかを返す。
+     * <p>
+     * 値がnullの場合または、値がサイズ1の配列で唯一の要素がnullの場合に{@code true}を返す。
+     *
+     * @param value 値
+     * @return nullの場合{@code true}
+     */
+    private boolean isNullValue(final Object value) {
+        if (value == null) {
+            return true;
+        } else if (value instanceof String[]) {
+            if (((String[]) value)[0] == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@link Number}に変換可能かを返す。。
+     * <p>
+     * 変換可能なケースは以下の通り。
+     * <ul>
+     * <li>値がnullでnullを許容している場合({@link #allowNullValue}がtrueの場合)</li>
+     * <li>値がNumberに代入可能な型の場合</li>
+     * <li>値がString型の場合</li>
+     * <li>値がString配列で要素数が1の場合(配列内の値がnullの場合は{@link #allowNullValue}がtrueの場合)</li>
+     * </ul>
+     *
+     * @param value 値
+     * @return 変換可能な場合は{@code true}
+     */
+    private boolean isConvertible(final Object value) {
+        if (value == null && allowNullValue) {
+            return true;
+        } else if (value instanceof Number) {
+            return true;
+        } else if (value instanceof String) {
+            return true;
+        } else if (value instanceof String[] && ((String[]) value).length == 1) {
+            if (((String[]) value)[0] == null) {
+                return allowNullValue;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -235,26 +280,26 @@ public abstract class NumberConvertorSupport implements Convertor {
      * @return 変換後の文字列
      */
     protected String convertToString(Object value) {
-        String str;
-        if (value instanceof String) {
-            str = (String) value;
-        } else if (value instanceof BigDecimal) {
-        	str = ((BigDecimal) value).toPlainString();
+        if (value instanceof BigDecimal) {
+            return ((BigDecimal) value).toPlainString();
         } else if (value instanceof Number) {
-            str = value.toString();
+            return value.toString();
+        } else if (value instanceof String) {
+            return trim((String) value);
         } else if (value instanceof String[]) {
-            String[] arg = (String[]) value;
-            if (arg.length == 1) {
-                str = arg[0];
+            String[] strings = (String[]) value;
+            if (strings.length == 1) {
+                if (strings[0] == null) {
+                    return null;
+                } else {
+                    return trim(strings[0]);
+                }
             } else {
                 return null;
             }
         } else {
             return null;
         }
-
-        // トリム
-        return trim(str);
     }
 
     /**

@@ -186,7 +186,15 @@ public class StringConvertor implements Convertor {
         } else if (value instanceof String[]) {
             if (((String[]) value).length == 1) {
                 value = ((String[]) value)[0];
-                convertible = true;
+                if (value == null) {
+                    if (allowNullValue) {
+                        return true;
+                    } else {
+                        convertible = false;
+                    }
+                } else {
+                    convertible = true;
+                }
             }
         }
 

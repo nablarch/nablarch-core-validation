@@ -1,14 +1,12 @@
 package nablarch.core.validation.convertor;
 
-import nablarch.core.ThreadContext;
-import nablarch.core.message.MockStringResourceHolder;
-import nablarch.core.validation.ValidationContext;
-import nablarch.core.validation.creator.ReflectionFormCreator;
-import nablarch.test.support.SystemRepositoryResource;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -16,8 +14,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import nablarch.core.ThreadContext;
+import nablarch.core.message.MockStringResourceHolder;
+import nablarch.core.validation.ValidationContext;
+import nablarch.core.validation.creator.ReflectionFormCreator;
+import nablarch.test.support.SystemRepositoryResource;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class IntegerConvertorTest {
 
@@ -188,10 +194,15 @@ public class IntegerConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
         assertFalse(testee.isConvertible(context, "param", "PROP0001", null, digits));
+        assertFalse(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, digits));
 
-        assertEquals(1, context.getMessages().size());
+        assertEquals(2, context.getMessages()
+                               .size());
         ThreadContext.setLanguage(Locale.ENGLISH);
         assertEquals("property1", context.getMessages().get(0).formatMessage());
+        assertEquals("property1", context.getMessages()
+                                         .get(1)
+                                         .formatMessage());
     }
 
     @Test
@@ -379,7 +390,8 @@ public class IntegerConvertorTest {
         //**********************************************************************
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
                 null, digits));
-
+        assertTrue(testee.isConvertible(context, "param", "PROP0001",
+                new String[] {null}, digits));
     }
 
     @Test
@@ -419,7 +431,7 @@ public class IntegerConvertorTest {
      * nullを許可する場合のテスト。
      */
     @Test
-    public void testisConvertAllowNullValue() {
+    public void testConvertAllowNullValue() {
 
         // nullを許可する。(デフォルト動作)
         testee = new IntegerConvertor();
@@ -434,17 +446,15 @@ public class IntegerConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
 
-        Integer i = (Integer) testee.convert(context, "param", new String[]{"10"}, digits);
-        assertEquals(Integer.valueOf(10), i);
+        assertEquals(10, testee.convert(context, "param", new String[] {"10"}, digits));
 
-        Integer i2 = (Integer) testee.convert(context, "param", new Integer(10), digits);
-        assertEquals(Integer.valueOf(10), i2);
+        assertEquals(10, testee.convert(context, "param", 10, digits));
 
-        Integer i3 = (Integer) testee.convert(context, "param", new Integer(Integer.MAX_VALUE), digits);
-        assertEquals(Integer.valueOf(Integer.MAX_VALUE), i3);
+        assertEquals(Integer.MAX_VALUE, testee.convert(context, "param", Integer.MAX_VALUE, digits));
 
-        Integer i4 = (Integer) testee.convert(context, "param", null, digits);
-        assertNull(i4);
+        assertNull(testee.convert(context, "param", null, digits));
+        assertNull(testee.convert(context, "param", new String[] {null}, digits));
+        
 
     }
 
@@ -577,6 +587,8 @@ public class IntegerConvertorTest {
         assertEquals(10, testee.convert(context, "param", new String[]{"10"}, digits));
         assertEquals(10000, testee.convert(context, "param", new String[]{"10,000"}, digits));
         assertNull(testee.convert(context, "param", new String[]{""}, digits));
+        assertNull(testee.convert(context, "param", null, digits));
+        assertNull(testee.convert(context, "param", new String[] {null}, digits));
     }
 
     @Test

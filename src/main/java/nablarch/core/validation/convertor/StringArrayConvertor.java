@@ -13,26 +13,17 @@ import nablarch.core.validation.ValidationContext;
  */
 public class StringArrayConvertor implements Convertor {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public <T> Object convert(ValidationContext<T> context, String propertyName, Object value, Annotation format) {
-
-        String[] values = (String[]) value;
-
-        return values;
+        return (String[]) value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Class<?> getTargetClass() {
         return String[].class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public <T> boolean isConvertible(ValidationContext<T> context,
             String propertyName, Object propertyDisplayName, Object value,
             Annotation format) {

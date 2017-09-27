@@ -53,53 +53,69 @@ public class BooleanConvertor implements Convertor {
 
         if (value == null) {
             return Boolean.FALSE;
-            
+        } else if (value instanceof Boolean) {
+            return value;
         } else if (value instanceof String[]) {
-            value = ((String[]) value)[0];
+            final String[] values = (String[]) value;
+            return values[0] == null ? false : Boolean.valueOf(values[0]);
+        } else {
+            return Boolean.valueOf(value.toString());
         }
-        
-        Boolean ret = Boolean.parseBoolean(value.toString());
-
-        return ret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Class<?> getTargetClass() {
         return Boolean.class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public <T> boolean isConvertible(ValidationContext<T> context,
             String propertyName, Object propertyDisplayName, Object value,
             Annotation format) {
-        
-        boolean convertible = false;
-        if (value == null && allowNullValue) {
-            return true;
-        } else if (value instanceof String) {
-            convertible = true;
-        } else if (value instanceof String[]) {
-            if (((String[]) value).length == 1) {
-                value = ((String[]) value)[0];
-                convertible = true;
-            }
-        }
 
-        if (value != null && value.toString().matches("[tT][rR][uU][eE]|[fF][aA][lL][sS][eE]")) {
-            convertible = true;
-        } else {
-            convertible = false;
-        }
-        
+        final boolean convertible = isConvertible(value);
         if (!convertible) {
             ValidationResultMessageUtil.addResultMessage(context, propertyName,
                                                         conversionFailedMessageId, propertyDisplayName);
         }
-        
         return convertible;
+    }
+
+    /**
+     * 値がbooleanに変換可能かを返す。
+     *
+     * @param value 値
+     * @return 変換可能な場合は{@code true}
+     */
+    private boolean isConvertible(final Object value) {
+        if (value == null && allowNullValue) {
+            return true;
+        } else if (value instanceof Boolean) {
+            return true;
+        } else if (value instanceof String) {
+            return isBooleanString((String) value);
+        } else if (value instanceof String[]) {
+            final String[] values = (String[]) value;
+            if (values.length != 1) {
+                return false;
+            } else {
+                final String str = values[0];
+                if (str == null) {
+                    return allowNullValue;
+                } else {
+                    return isBooleanString(str);
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 真偽値の文字列表記(大文字小文字は区別しない)にマッチするか否かを返す。
+     * @param value 値
+     * @return 値が真偽値の文字列表記の場合は{@code true}
+     */
+    private boolean isBooleanString(final String value) {
+        return value.matches("(?i)true|false");
     }
 }
