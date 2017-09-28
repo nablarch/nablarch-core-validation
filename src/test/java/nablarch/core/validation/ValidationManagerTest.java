@@ -26,6 +26,7 @@ import nablarch.core.validation.convertor.Digits;
 import nablarch.core.validation.validator.Length;
 import nablarch.core.validation.validator.NumberRange;
 import nablarch.core.validation.validator.Required;
+import nablarch.core.validation.validator.unicode.SystemChar;
 import nablarch.test.support.SystemRepositoryResource;
 
 import org.junit.Before;
@@ -49,6 +50,9 @@ public class ValidationManagerTest {
         { "User.id", "ja","ID", "en","ID"},
         { "User.name", "ja","名前", "en","Name"},
         { "User.age", "ja","年齢", "en","Age"},
+        { "User.array", "ja", "配列", "en", "Array"},
+        { "User.systemChar", "ja", "文字列", "en", "string"},
+        { "User.num", "ja", "数値", "en", "num"},
         { "StringArrayValueHolder.code", "ja","コード", "en","code"},
         { "MSG00001", "ja","{0}の値が不正です。","en","{0} value is invalid."},
         { "MSG00011","ja","{0}は必ず入力してください。","en","{0} is required."},
@@ -63,6 +67,7 @@ public class ValidationManagerTest {
         { "PROP0001","ja","名前","en","Name"},
         { "PROP0002","ja","ユーザ氏名","en","User Name"},
         { "PROP0003","ja","備考","en","Remarks"},
+        { "systemchar.message", "ja", "NG", "en", "NG"}
        };
 
     @BeforeClass
@@ -73,9 +78,6 @@ public class ValidationManagerTest {
     public void setUp() {
         MockStringResourceHolder mock = repositoryResource.getComponent("stringResourceHolder");
         mock.setMessages(MESSAGES);
-
-        Map<String, String[]> params = new HashMap<String, String[]>();
-        params.put("param", new String[]{"200"});
 
         BasicStaticDataCache cache = repositoryResource.getComponent("validationManager.formDefinitionCache");
         cache.initialize();
@@ -88,12 +90,9 @@ public class ValidationManagerTest {
         MockStringResourceHolder mock = repositoryResource.getComponent("stringResourceHolder");
         mock.setMessages(MESSAGES);
 
-        Map<String, String[]> params = new HashMap<String, String[]>();
-        params.put("param", new String[]{"10"});
-
         BasicStaticDataCache cache = repositoryResource.getComponent("validationManager2.formDefinitionCache");
         cache.initialize();
-        manager =  repositoryResource.getComponent("validationManager2");
+        manager = repositoryResource.getComponent("validationManager2");
         manager.initialize();
     }
 
@@ -107,9 +106,12 @@ public class ValidationManagerTest {
 
         Map<String, String[]> params = new HashMap<String, String[]>();
 
-        params.put("id", new String[]{"00000001"});
-        params.put("name", new String[]{"テストユーザ"});
-        params.put("age", new String[]{"30"});
+        params.put("id", new String[] {"00000001"});
+        params.put("name", new String[] {"テストユーザ"});
+        params.put("age", new String[] {"30"});
+        params.put("array", new String[] {"12345", null});
+        params.put("systemChar", new String[] {null});
+        params.put("num", new String[] {null});
 
         ValidationContext<User> result = manager.validateAndConvert("", User.class, params, null);
         User user = result.createObject();
@@ -117,6 +119,9 @@ public class ValidationManagerTest {
         assertEquals("00000001", user.getId());
         assertEquals("テストユーザ", user.getName());
         assertEquals(new BigDecimal(30l), user.getAge());
+        assertArrayEquals(new String[] {"12345", null}, user.getArray());
+        assertNull(user.getSystemChar());
+        assertNull(user.getNum());
     }
 
     /**
@@ -216,7 +221,8 @@ public class ValidationManagerTest {
         assertFalse(result.isValid());
 
         ThreadContext.setLanguage(Locale.JAPANESE);
-        ValidationContextMatcher.ValidationContextWrapper contextWrapper = new ValidationContextMatcher.ValidationContextWrapper(result);
+        ValidationContextMatcher.ValidationContextWrapper contextWrapper = new ValidationContextMatcher.ValidationContextWrapper(
+                result);
         assertThat(contextWrapper, ValidationContextMatcher.containsMessage("MSG00011", "IDは必ず入力してください。", "id"));
         assertThat(contextWrapper, ValidationContextMatcher.containsMessage("MSG00011", "名前は必ず入力してください。", "name"));
         assertThat(contextWrapper, ValidationContextMatcher.containsMessage("MSG00011", "年齢は必ず入力してください。", "age"));
@@ -992,14 +998,24 @@ public class ValidationManagerTest {
     }
 
     public static class User {
+
         private String id;
         private String name;
         private BigDecimal age;
+
+        private String[] array;
+
+        private String systemChar;
+
+        private Long num;
 
         public User(Map<String, Object> props) {
             id = (String) props.get("id");
             name = (String) props.get("name");
             age = (BigDecimal) props.get("age");
+            array = (String[]) props.get("array");
+            systemChar = (String) props.get("systemChar");
+            num = (Long) props.get("num");
         }
 
         public String getId() {
@@ -1032,9 +1048,39 @@ public class ValidationManagerTest {
         public void setAge(BigDecimal age) {
             this.age = age;
         }
+
+        public String[] getArray() {
+            return array;
+        }
+
+        @Length(max = 10)
+        @SystemChar
+        public void setArray(final String[] array) {
+            this.array = array;
+        }
+
+        public String getSystemChar() {
+            return systemChar;
+        }
+
+        @SystemChar
+        public void setSystemChar(final String systemChar) {
+            this.systemChar = systemChar;
+        }
+
+        public Long getNum() {
+            return num;
+        }
+
+        @Digits(integer = 15)
+        @NumberRange(max = 100000000000000D)
+        public void setNum(final Long num) {
+            this.num = num;
+        }
     }
 
     public static class StringArrayValueHolder {
+
         public StringArrayValueHolder(Map<String, Object> params) {
             codes = (String[]) params.get("codes");
         }

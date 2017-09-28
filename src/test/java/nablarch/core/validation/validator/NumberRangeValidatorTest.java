@@ -1,5 +1,15 @@
 package nablarch.core.validation.validator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import nablarch.core.ThreadContext;
 import nablarch.core.message.MockStringResourceHolder;
 import nablarch.core.repository.SystemRepository;
@@ -8,16 +18,9 @@ import nablarch.core.repository.di.config.xml.XmlComponentDefinitionLoader;
 import nablarch.core.validation.ValidationContext;
 import nablarch.core.validation.convertor.TestTarget;
 import nablarch.core.validation.creator.ReflectionFormCreator;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 
 public class NumberRangeValidatorTest {
@@ -88,6 +91,7 @@ public class NumberRangeValidatorTest {
         assertTrue(testee.validate(context, "param", "PROP0001", range, new BigDecimal(11)));
         assertTrue(testee.validate(context, "param", "PROP0001", range, 10.1));
         assertTrue(testee.validate(context, "param", "PROP0001", range, 10.1f));
+        assertTrue(testee.validate(context, "param", "PROP0001", range, null));
         
     }
 

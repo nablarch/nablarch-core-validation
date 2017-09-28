@@ -40,6 +40,14 @@
                     <property name="maxAndMinMessageId" value="MSG00022"/>
                     <property name="fixLengthMessageId" value="MSG00023"/>
                 </component>
+                <component class="nablarch.core.validation.validator.unicode.SystemCharValidator">
+                  <property name="defaultCharsetDef">
+                    <component class="nablarch.core.validation.validator.unicode.LiteralCharsetDef">
+                      <property name="allowedCharacters" value="1234567890" />
+                      <property name="messageId" value="systemchar.message" />
+                    </component>
+                  </property>
+                </component>
             </list>
         </property>
         <property name="formDefinitionCache">
@@ -89,6 +97,14 @@
                     <property name="maxMessageId" value="MSG00021"/>
                     <property name="maxAndMinMessageId" value="MSG00022"/>
                     <property name="fixLengthMessageId" value="MSG00023"/>
+                </component>
+                <component class="nablarch.core.validation.validator.unicode.SystemCharValidator">
+                  <property name="defaultCharsetDef">
+                    <component class="nablarch.core.validation.validator.unicode.LiteralCharsetDef">
+                      <property name="allowedCharacters" value="1234567890" />
+                      <property name="messageId" value="systemchar.message" />
+                    </component>
+                  </property>
                 </component>
             </list>
         </property>

@@ -1,14 +1,12 @@
 package nablarch.core.validation.convertor;
 
-import nablarch.core.ThreadContext;
-import nablarch.core.message.MockStringResourceHolder;
-import nablarch.core.validation.ValidationContext;
-import nablarch.core.validation.creator.ReflectionFormCreator;
-import nablarch.test.support.SystemRepositoryResource;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -16,8 +14,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import nablarch.core.ThreadContext;
+import nablarch.core.message.MockStringResourceHolder;
+import nablarch.core.validation.ValidationContext;
+import nablarch.core.validation.creator.ReflectionFormCreator;
+import nablarch.test.support.SystemRepositoryResource;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class LongConvertorTest {
 
@@ -168,13 +174,18 @@ public class LongConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
 
-        assertFalse(testee.isConvertible(context, "param", "PROP0001",
-                null, digits));
+        assertFalse(testee.isConvertible(context, "param", "PROP0001", null, digits));
+        assertFalse(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, digits));
 
-        assertEquals(1, context.getMessages().size());
+        assertEquals(2, context.getMessages()
+                               .size());
         ThreadContext.setLanguage(Locale.ENGLISH);
-        assertEquals("property1",
-                context.getMessages().get(0).formatMessage());
+        assertEquals("property1", context.getMessages()
+                                         .get(0)
+                                         .formatMessage());
+        assertEquals("property1", context.getMessages()
+                                         .get(1)
+                                         .formatMessage());
     }
 
     @Test
@@ -358,8 +369,8 @@ public class LongConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
 
-        assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                null, digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", null, digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, digits));
     }
 
     @Test
@@ -481,6 +492,9 @@ public class LongConvertorTest {
         assertEquals(1L, testee.convert(context, "param", 1L, digits));
         assertEquals(1L, testee.convert(context, "param", new BigDecimal("1"), digits));
         assertEquals(-12345L, testee.convert(context, "param", new BigDecimal("-12345"), digits));
+
+        assertNull(testee.convert(context, "param", null, digits));
+        assertNull(testee.convert(context, "param", new String[] {null}, digits));
     }
 
     @Test
@@ -544,6 +558,7 @@ public class LongConvertorTest {
         assertEquals(1L, testee.convert(context, "param", new BigDecimal("1"), digits));
         assertEquals(-12345L, testee.convert(context, "param", new BigDecimal("-12345"), digits));
         assertNull(testee.convert(context, "param", null, digits));
+        assertNull(testee.convert(context, "param", new String[] {null}, digits));
     }
 
 

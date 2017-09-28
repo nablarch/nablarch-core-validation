@@ -82,7 +82,6 @@ public class StringConvertorTest {
         params.put("param", new String[]{"10"});
 
         正常に変換されるケース: {
-            System.out.println("params = " + params);
             ValidationContext<TestTarget> context = new ValidationContext<TestTarget>(
                     "", TestTarget.class,
                     new ReflectionFormCreator(),
@@ -133,13 +132,15 @@ public class StringConvertorTest {
                     "", TestTarget.class,
                     new ReflectionFormCreator(),
                     params, "");
-            assertFalse(testee.isConvertible(context, "param", "PROP0001", null,
-                    null));
+            assertFalse(testee.isConvertible(context, "param", "PROP0001", null, null));
+            assertFalse(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, null));
 
-            assertEquals(1, context.getMessages().size());
+            assertEquals(2, context.getMessages().size());
             ThreadContext.setLanguage(Locale.ENGLISH);
             assertEquals("value of PROP0001 is not valid.",
                     context.getMessages().get(0).formatMessage());
+            assertEquals("value of PROP0001 is not valid.",
+                    context.getMessages().get(1).formatMessage());
         }
 
         文字列を指定した場合: {
@@ -211,7 +212,6 @@ public class StringConvertorTest {
         params.put("param", new String[]{"10"});
 
         正常に変換されるケース: {
-            System.out.println("params = " + params);
             ValidationContext<TestTarget> context = new ValidationContext<TestTarget>(
                     "", TestTarget.class,
                     new ReflectionFormCreator(),
@@ -264,8 +264,8 @@ public class StringConvertorTest {
                     "", TestTarget.class,
                     new ReflectionFormCreator(),
                     params, "");
-            assertTrue(testee.isConvertible(context, "param", "PROP0001", null,
-                    null));
+            assertTrue(testee.isConvertible(context, "param", "PROP0001", null, null));
+            assertTrue(testee.isConvertible(context, "param", "PROP0001", new String[] {null}, null));
 
         }
 
@@ -385,6 +385,7 @@ public class StringConvertorTest {
                 null));
         assertEquals("StringはOK", "文字列", testee.convert(context, "param", "文字列", null));
         assertNull("nullはOK", testee.convert(context, "param", null, null));
+        assertNull("nullのみの要素1つの配列もOK", testee.convert(context, "param", new String[] {null}, null));
     }
     @Test
     public void testTargetClass() {

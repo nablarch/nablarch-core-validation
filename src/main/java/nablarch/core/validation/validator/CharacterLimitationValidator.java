@@ -44,6 +44,9 @@ public abstract class CharacterLimitationValidator<A extends Annotation> extends
     public <T> boolean validateSingleValue(ValidationContext<T> context,
             String propertyName, Object propertyDisplayObject,
             A annotation, String value) {
+        if (value == null) {
+            return true;
+        }
         if (!isValid(annotation, value)) {
             String messageIdFromAnnotation = getMessageIdFromAnnotation(annotation);
             if (!StringUtil.isNullOrEmpty(messageIdFromAnnotation)) {
@@ -57,8 +60,9 @@ public abstract class CharacterLimitationValidator<A extends Annotation> extends
     }
     /**
      * 有効文字以外が入力されていないかをチェックする。
+     * 
      * @param annotation アノテーション
-     * @param value バリデーション対象の値
+     * @param value バリデーション対象の値(null以外)
      * @return 有効文字以外が入力されていない場合true
      */
     @Published(tag = "architect")

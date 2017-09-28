@@ -1,5 +1,17 @@
 package nablarch.core.validation.validator;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import nablarch.core.ThreadContext;
 import nablarch.core.message.MockStringResourceHolder;
 import nablarch.core.repository.SystemRepository;
@@ -8,17 +20,9 @@ import nablarch.core.repository.di.config.xml.XmlComponentDefinitionLoader;
 import nablarch.core.validation.ValidationContext;
 import nablarch.core.validation.convertor.TestTarget;
 import nablarch.core.validation.creator.ReflectionFormCreator;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 
 public class LengthValidatorTest {
@@ -82,7 +86,8 @@ public class LengthValidatorTest {
 
         assertTrue(testee.validate(context, "param", "PROP0001", length, "12345"));        
         assertTrue(testee.validate(context, "param", "PROP0001", length, "1234567"));       
-        assertTrue(testee.validate(context, "param", "PROP0001", length, "1234567890"));        
+        assertTrue(testee.validate(context, "param", "PROP0001", length, "1234567890"));
+        assertTrue("nullはOK", testee.validate(context, "param", "PROP0001", length, null));
     }
     @Test
     public void testValidateLonger() {
@@ -159,7 +164,7 @@ public class LengthValidatorTest {
     @Test
     public void testValidateMulti() {
 
-        assertTrue(testee.validate(context, "param", "PROP0001", length, new String[] {"12345", "0123456789"}));    
+        assertTrue(testee.validate(context, "param", "PROP0001", length, new String[] {"12345", "0123456789", null}));    
         assertFalse(testee.validate(context, "param", "PROP0001", length, new String[] {"12345", "01234567890", "1234"}));    
         
         assertEquals(1, context.getMessages().size());
