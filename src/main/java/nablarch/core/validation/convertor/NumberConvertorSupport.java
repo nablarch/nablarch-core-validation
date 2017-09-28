@@ -21,9 +21,10 @@ import nablarch.core.validation.ValidationResultMessageUtil;
  * 数値のコンバータは変換前にバリデーションを行うが、各コンバータが行う共通バリデーションは当クラスにて行う。
  * 共通バリデーションの仕様は次の通りである。
  * <ul>
- *     <li>allowNullValueがfalseの時に、入力値がnullでないこと。</li>
- *     <li>入力値がNumber、String、String配列のいずれかのインスタンスであること。</li>
- *     <li>入力値がString配列である場合、要素数が1であること。</li>
+ * <li>値がnullでnullを許容している場合({@link #allowNullValue}がtrueの場合)</li>
+ * <li>値がNumberに代入可能な型の場合</li>
+ * <li>値がString型の場合</li>
+ * <li>値がString配列で要素数が1の場合(配列内の値がnullの場合は{@link #allowNullValue}がtrueの場合)</li>
  * </ul>
  *
  * <p>
@@ -169,16 +170,8 @@ public abstract class NumberConvertorSupport implements Convertor {
     }
 
     /**
-     * {@link Number}に変換可能かを返す。。
-     * <p>
-     * 変換可能なケースは以下の通り。
-     * <ul>
-     * <li>値がnullでnullを許容している場合({@link #allowNullValue}がtrueの場合)</li>
-     * <li>値がNumberに代入可能な型の場合</li>
-     * <li>値がString型の場合</li>
-     * <li>値がString配列で要素数が1の場合(配列内の値がnullの場合は{@link #allowNullValue}がtrueの場合)</li>
-     * </ul>
-     *
+     * {@link Number}に変換可能かを返す。
+     * 
      * @param value 値
      * @return 変換可能な場合は{@code true}
      */
