@@ -50,9 +50,9 @@ public class ValidationManagerTest {
         { "User.id", "ja","ID", "en","ID"},
         { "User.name", "ja","名前", "en","Name"},
         { "User.age", "ja","年齢", "en","Age"},
-        {"User.array", "ja", "配列", "en", "Array"},
-        {"User.systemChar", "ja", "文字列", "en", "string"},
-        {"User.num", "ja", "数値", "en", "num"},
+        { "User.array", "ja", "配列", "en", "Array"},
+        { "User.systemChar", "ja", "文字列", "en", "string"},
+        { "User.num", "ja", "数値", "en", "num"},
         { "StringArrayValueHolder.code", "ja","コード", "en","code"},
         { "MSG00001", "ja","{0}の値が不正です。","en","{0} value is invalid."},
         { "MSG00011","ja","{0}は必ず入力してください。","en","{0} is required."},
@@ -67,7 +67,7 @@ public class ValidationManagerTest {
         { "PROP0001","ja","名前","en","Name"},
         { "PROP0002","ja","ユーザ氏名","en","User Name"},
         { "PROP0003","ja","備考","en","Remarks"},
-        {"systemchar.message", "ja", "NG", "en", "NG"}
+        { "systemchar.message", "ja", "NG", "en", "NG"}
        };
 
     @BeforeClass
