@@ -19,7 +19,8 @@ import nablarch.core.validation.ValidationResultMessageUtil;
 /**
  * 数値のコンバータの作成を助けるサポートクラス。</br>
  * 数値のコンバータは変換前にバリデーションを行うが、各コンバータが行う共通バリデーションは当クラスにて行う。
- * 共通バリデーションの仕様は次の通りである。
+ * <p>
+ * 共通バリデーションでは、以下のいずれかの場合、バリデーションOKとする。
  * <ul>
  * <li>値がnullでnullを許容している場合({@link #allowNullValue}がtrueの場合)</li>
  * <li>値がNumberに代入可能な型の場合</li>
