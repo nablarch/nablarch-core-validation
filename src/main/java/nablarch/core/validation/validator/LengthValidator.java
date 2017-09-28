@@ -3,6 +3,7 @@ package nablarch.core.validation.validator;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import nablarch.core.util.StringUtil;
 import nablarch.core.validation.ValidationContext;
 import nablarch.core.validation.ValidationResultMessageUtil;
 
@@ -71,12 +72,11 @@ public class LengthValidator extends StringValidatorSupport<Length> {
      */
     public <T> boolean validateSingleValue(ValidationContext<T> context, String propertyName,
             Object propertyDisplayName, Length length, String value) {
-        // 文字列長 0 は @Required で防ぐ前提であるため、無条件で許可する
-        // 例えば文字列長が 0 (入力なし) または 8 のみを許可するために使用する
-        if (value == null) {
+        // 空文字列及びnullは、必須入力(Required)で防ぐ前提であるため、無条件で許可する
+        if (StringUtil.isNullOrEmpty(value)) {
             return true;
         }
-        if (length.min() > 0 && value.length() != 0) {
+        if (length.min() > 0) {
             if (value.length() < length.min()) {
                 addMessage(context, propertyName, propertyDisplayName, length);
                 return false;
