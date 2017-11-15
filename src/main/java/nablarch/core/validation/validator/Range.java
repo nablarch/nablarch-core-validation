@@ -62,16 +62,17 @@ class Range {
      * @param value 値
      * @return Rangeの範囲内の場合は {@code true}
      */
-    boolean in(final BigDecimal value) {
-        return isMoreThenOrEqualToMin(value) && isLessThenOrEqualToMax(value) ;
+    boolean includes(final Number value) {
+        final BigDecimal decimal = value instanceof BigDecimal ? BigDecimal.class.cast(value) : new BigDecimal(value.toString());
+        return isLessThanOrEqualToMax(decimal) && isGreaterThanOrEqualToMin(decimal);
     }
 
     /**
-     * 指定の値が最大値以下かどうか。
+     * 指定の値が最小値以上かどうか
      * @param value 値
-     * @return 最大値以下の場合true
+     * @return 最小値以上の場合true
      */
-    private boolean isMoreThenOrEqualToMin(final BigDecimal value) {
+    private boolean isGreaterThanOrEqualToMin(final BigDecimal value) {
         return min == null || min.compareTo(value) <= 0;
     }
 
@@ -80,7 +81,7 @@ class Range {
      * @param value 値
      * @return 最大値以下の場合true
      */
-    private boolean isLessThenOrEqualToMax(final BigDecimal value) {
+    private boolean isLessThanOrEqualToMax(final BigDecimal value) {
         return max == null || max.compareTo(value) >= 0;
     }
 
