@@ -98,7 +98,7 @@ public class DecimalRangeValidator implements DirectCallableValidator {
             throw new IllegalArgumentException("invalid decimal range.", e);
         }
 
-        if (!range.in(toBigDecimal(value))) {
+        if (!range.includes(toBigDecimal(value))) {
             ValidationResultMessageUtil.addResultMessage(
                     context, propertyName, getMessageId(decimalRange), propertyDisplayName, range.getMinString(),
                     range.getMaxString());
