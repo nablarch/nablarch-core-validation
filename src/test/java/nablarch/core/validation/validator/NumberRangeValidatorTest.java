@@ -360,7 +360,7 @@ public class NumberRangeValidatorTest {
             
             @Override
             public long min() {
-                return Integer.MIN_VALUE;
+                return Long.MIN_VALUE;
             }
             
             @Override
@@ -370,7 +370,7 @@ public class NumberRangeValidatorTest {
             
             @Override
             public long max() {
-                return Integer.MAX_VALUE;
+                return Long.MAX_VALUE;
             }
         };
 
