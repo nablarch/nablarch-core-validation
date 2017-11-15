@@ -262,7 +262,7 @@ public class DecimalRangeValidatorTest {
         }
 
         @Test
-        public void validation対象の値がNumberのサブタイプでない場合例外が送出sれること() {
+        public void validation対象の値がNumberのサブタイプでない場合例外が送出されること() {
             expectedException.expect(IllegalArgumentException.class);
             expectedException.expectMessage(
                     "unsupported data type. supported type:[Number], actual type:java.lang.String");
