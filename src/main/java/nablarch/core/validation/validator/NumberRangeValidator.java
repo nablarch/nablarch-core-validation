@@ -1,7 +1,6 @@
 package nablarch.core.validation.validator;
 
 import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
 import java.util.Map;
 
 import nablarch.core.util.StringUtil;
@@ -127,7 +126,7 @@ public class NumberRangeValidator implements DirectCallableValidator {
                 numberRange.min() != Long.MIN_VALUE ? numberRange.min() : null,
                 numberRange.max() != Long.MAX_VALUE ? numberRange.max() : null);
 
-        if (!range.in(num instanceof BigDecimal ? (BigDecimal) num : new BigDecimal(num.toString()))) {
+        if (!range.includes(num)) {
             addMessage(context, propertyName, propertyDisplayName, numberRange);
             return false;
         }
