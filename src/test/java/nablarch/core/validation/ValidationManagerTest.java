@@ -23,6 +23,7 @@ import nablarch.core.message.Message;
 import nablarch.core.message.MessageNotFoundException;
 import nablarch.core.message.MockStringResourceHolder;
 import nablarch.core.validation.convertor.Digits;
+import nablarch.core.validation.validator.DecimalRange;
 import nablarch.core.validation.validator.Length;
 import nablarch.core.validation.validator.NumberRange;
 import nablarch.core.validation.validator.Required;
@@ -53,6 +54,7 @@ public class ValidationManagerTest {
         { "User.array", "ja", "配列", "en", "Array"},
         { "User.systemChar", "ja", "文字列", "en", "string"},
         { "User.num", "ja", "数値", "en", "num"},
+        { "User.rate", "ja", "レート", "en", "rate"},
         { "StringArrayValueHolder.code", "ja","コード", "en","code"},
         { "MSG00001", "ja","{0}の値が不正です。","en","{0} value is invalid."},
         { "MSG00011","ja","{0}は必ず入力してください。","en","{0} is required."},
@@ -60,7 +62,7 @@ public class ValidationManagerTest {
         { "MSG00022","ja","{0}は{1}文字以上{2}文字以下で入力してください。","en","{0} is not in the range {1} through {2}."},
         { "MSG00023","ja","{0}は{1}文字で入力してください。","en","{0} cannot be length {1}."},
         { "MSG00031","ja","{0}は整数{1}桁で入力してください。","en","{0} length must be under {1}."},
-        { "MSG00032","ja","{0}は整数部{1}桁、少数部{2}桁で入力してください。","en","{0} must be {1}-digits and {1}-digits decimal integer part."},
+        { "MSG00032","ja","{0}は整数部{1}桁、小数部{2}桁で入力してください。","en","{0} must be {1}-digits and {1}-digits decimal integer part."},
         { "MSG00051","ja","{0}は{2}以下で入力してください。","en","{0} cannot be greater than {2}."},
         { "MSG00052","ja","{0}は{1}以上{2}以下で入力してください。","en","{0} is not in the range {1} through {2}."},
         { "MSG00053","ja","{0}は{1}以上{2}以下で入力してください。","en","{0} is not in the range {1} through {2}."},
@@ -112,6 +114,7 @@ public class ValidationManagerTest {
         params.put("array", new String[] {"12345", null});
         params.put("systemChar", new String[] {null});
         params.put("num", new String[] {null});
+        params.put("rate", new String[] {"0.003"});
 
         ValidationContext<User> result = manager.validateAndConvert("", User.class, params, null);
         User user = result.createObject();
@@ -122,6 +125,7 @@ public class ValidationManagerTest {
         assertArrayEquals(new String[] {"12345", null}, user.getArray());
         assertNull(user.getSystemChar());
         assertNull(user.getNum());
+        assertEquals(new BigDecimal("0.003"), user.getRate());
     }
 
     /**
@@ -140,6 +144,7 @@ public class ValidationManagerTest {
         params.put("id", new String[]{"0000001"});
         params.put("name", new String[]{"123456789"});
         params.put("age", new String[]{"101"});
+        params.put("rate", new String[] {"1.1"});
 
         ValidationContext<User> result = manager.validateAndConvert("", User.class, params, null);
 
@@ -169,12 +174,15 @@ public class ValidationManagerTest {
         assertThat(contextWrapper,
                 ValidationContextMatcher.containsMessage(
                         "MSG00052", "年齢は0以上100以下で入力してください。", "age"));
+        assertThat(contextWrapper,
+                ValidationContextMatcher.containsMessage(
+                        "MSG00052", "レートは0.00001以上0.99999以下で入力してください。", "rate"));
 
         User dirtyUser = result.createDirtyObject();
         assertEquals("0000001", dirtyUser.getId());
         assertEquals("123456789", dirtyUser.getName());
         assertEquals(BigDecimal.valueOf(101), dirtyUser.getAge());
-
+        assertEquals(new BigDecimal("1.1"), dirtyUser.getRate());
     }
 
     /**
@@ -190,6 +198,7 @@ public class ValidationManagerTest {
         params.put("id", new String[]{"00000001"});
         params.put("name", new String[]{"テストユーザ"});
         params.put("age", new String[]{"abc"});
+        params.put("rate", new String[] {"1.a"});
 
         setUpEntityPropertyNameMode();
         ValidationContext<User> result = manager.validateAndConvert("", User.class, params, null);
@@ -199,7 +208,11 @@ public class ValidationManagerTest {
                 result),
                 ValidationContextMatcher.containsMessage("MSG00031",
                         "年齢は整数3桁で入力してください。", "age"));
-
+        
+        assertThat(new ValidationContextMatcher.ValidationContextWrapper(
+                        result),
+                ValidationContextMatcher.containsMessage("MSG00032",
+                        "レートは整数部1桁、小数部5桁で入力してください。", "rate"));
     }
 
     /**
@@ -871,13 +884,13 @@ public class ValidationManagerTest {
                             "MSG00021", "備考は10文字以下で入力してください。", "remarks"));
             assertThat(new ValidationContextMatcher.ValidationContextWrapper(result),
                     ValidationContextMatcher.containsMessage(
-                            "MSG00032", "BigDecimal1は整数部1桁、少数部1桁で入力してください。", "bd1"));
+                            "MSG00032", "BigDecimal1は整数部1桁、小数部1桁で入力してください。", "bd1"));
             assertThat(new ValidationContextMatcher.ValidationContextWrapper(result),
                     ValidationContextMatcher.containsMessage(
-                            "MSG00032", "オーバライドしたBigDecimal1は整数部2桁、少数部2桁で入力してください。", "overridedBd"));
+                            "MSG00032", "オーバライドしたBigDecimal1は整数部2桁、小数部2桁で入力してください。", "overridedBd"));
             assertThat(new ValidationContextMatcher.ValidationContextWrapper(result),
                     ValidationContextMatcher.containsMessage(
-                            "MSG00032", "オーバライドしたBigDecimal2は整数部4桁、少数部4桁で入力してください。", "overridedBd2"));
+                            "MSG00032", "オーバライドしたBigDecimal2は整数部4桁、小数部4桁で入力してください。", "overridedBd2"));
 
             ThreadContext.setLanguage(Locale.ENGLISH);
             assertThat(new ValidationContextMatcher.ValidationContextWrapper(result),
@@ -1009,6 +1022,8 @@ public class ValidationManagerTest {
 
         private Long num;
 
+        private BigDecimal rate;
+        
         public User(Map<String, Object> props) {
             id = (String) props.get("id");
             name = (String) props.get("name");
@@ -1016,6 +1031,7 @@ public class ValidationManagerTest {
             array = (String[]) props.get("array");
             systemChar = (String) props.get("systemChar");
             num = (Long) props.get("num");
+            rate = (BigDecimal) props.get("rate");
         }
 
         public String getId() {
@@ -1073,9 +1089,19 @@ public class ValidationManagerTest {
         }
 
         @Digits(integer = 15)
-        @NumberRange(max = 100000000000000D)
+        @NumberRange(max = 1000000000)
         public void setNum(final Long num) {
             this.num = num;
+        }
+
+        public BigDecimal getRate() {
+            return rate;
+        }
+
+        @Digits(integer = 1, fraction = 5)
+        @DecimalRange(min = "0.00001", max = "0.99999")
+        public void setRate(final BigDecimal rate) {
+            this.rate = rate;
         }
     }
 

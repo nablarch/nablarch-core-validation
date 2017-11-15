@@ -26,11 +26,13 @@ public @interface NumberRange {
     /**
      * 数値の最小値。
      */
-    double min() default Double.NEGATIVE_INFINITY;
+    long min() default Long.MIN_VALUE;
+
     /**
      * 数値の最大値。
      */
-    double max() default Double.POSITIVE_INFINITY;
+    long max() default Long.MAX_VALUE;
+
     /**
      * 数値が範囲に入らなかった場合のメッセージID。<br/>
      * 指定しなかった場合、{@link NumberRangeValidator}で設定されたデフォルトのメッセージIDが使用される。

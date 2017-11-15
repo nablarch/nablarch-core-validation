@@ -36,8 +36,8 @@ public class PropertyValidationDefinitionTest {
         assertThat(required, not(sameInstance(null)));
         assertThat(length.max(), is(10));
         assertThat(format.value(), is("test"));
-        assertThat(range.min(), is(0.0));
-        assertThat(range.max(), is(10.0));
+        assertThat(range.min(), is(0L));
+        assertThat(range.max(), is(10L));
         
     }
 
@@ -60,8 +60,8 @@ public class PropertyValidationDefinitionTest {
             assertThat(required, not(sameInstance(null)));
             assertThat(length.max(), is(10));
             assertThat(format.value(), is("test"));
-            assertThat(range.min(), is(0.0));
-            assertThat(range.max(), is(10.0));
+            assertThat(range.min(), is(0L));
+            assertThat(range.max(), is(10L));
         }        
         
 
