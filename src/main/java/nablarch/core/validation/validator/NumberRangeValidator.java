@@ -79,7 +79,7 @@ public class NumberRangeValidator implements DirectCallableValidator {
      * 
      * @param maxMessageId バリデーションの条件に最大値のみが指定されていた場合のデフォルトのエラーメッセージのメッセージID。
      */
-    public void setMaxMessageId(String maxMessageId) {
+    public void setMaxMessageId(final String maxMessageId) {
         this.maxMessageId = maxMessageId;
     }
     
@@ -88,7 +88,7 @@ public class NumberRangeValidator implements DirectCallableValidator {
      * 例 : "{0}は{1}以上{2}以下で入力してください。"
      * @param maxAndMinMessageId バリデーションの条件に最大値と最小値が指定されていた場合のデフォルトのエラーメッセージのメッセージID
      */
-    public void setMaxAndMinMessageId(String maxAndMinMessageId) {
+    public void setMaxAndMinMessageId(final String maxAndMinMessageId) {
         this.maxAndMinMessageId = maxAndMinMessageId;
     }
     /**
@@ -96,13 +96,14 @@ public class NumberRangeValidator implements DirectCallableValidator {
      * 例 : "{0}は{1}以上で入力してください。"
      * @param minMessageId バリデーションの条件に最小値のみが指定されていた場合のデフォルトのエラーメッセージのメッセージID
      */
-    public void setMinMessageId(String minMessageId) {
+    public void setMinMessageId(final String minMessageId) {
         this.minMessageId = minMessageId;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<? extends Annotation> getAnnotationClass() {
         return NumberRange.class;
     }
@@ -110,29 +111,25 @@ public class NumberRangeValidator implements DirectCallableValidator {
     /**
      * {@inheritDoc}
      */
-    public <T> boolean validate(ValidationContext<T> context, String propertyName,
-            Object propertyDisplayName, Annotation annotation, Object value) {
+    @Override
+    public <T> boolean validate(final ValidationContext<T> context, final String propertyName,
+            final Object propertyDisplayName, final Annotation annotation, final Object value) {
         
         if (value == null) {
             return true;
         }
 
-        Number num = (Number) value;
-        NumberRange range = (NumberRange) annotation;
-        if (range.min() > Double.NEGATIVE_INFINITY) {
-            if (num.doubleValue() < range.min()) {
-                addMessage(context, propertyName, propertyDisplayName, range);
-                return false;
-            }
-        }
+        final Number num = (Number) value;
+        
+        final NumberRange numberRange = (NumberRange) annotation;
+        final Range range = new Range(
+                numberRange.min() != Long.MIN_VALUE ? numberRange.min() : null,
+                numberRange.max() != Long.MAX_VALUE ? numberRange.max() : null);
 
-        if (range.max() < Double.POSITIVE_INFINITY) {
-            if (num.doubleValue() > range.max()) {
-                addMessage(context, propertyName, propertyDisplayName, range);
-                return false;
-            }
+        if (!range.includes(num)) {
+            addMessage(context, propertyName, propertyDisplayName, numberRange);
+            return false;
         }
-
         return true;
     }
 
@@ -145,15 +142,15 @@ public class NumberRangeValidator implements DirectCallableValidator {
      * @param propertyDisplayName プロパティの表示名オブジェクト
      * @param range NumberRangeアノテーション
      */
-    private <T> void addMessage(ValidationContext<T> context,
-            String propertyName, Object propertyDisplayName, NumberRange range) {
-        String messageId;
-        if (range.messageId().length() > 0) {
+    private <T> void addMessage(final ValidationContext<T> context,
+            final String propertyName, final Object propertyDisplayName, final NumberRange range) {
+        final String messageId;
+        if (StringUtil.hasValue(range.messageId())) {
             messageId = range.messageId();
         } else {
-            if (range.min() > Double.NEGATIVE_INFINITY && range.max() < Double.POSITIVE_INFINITY) {
+            if (range.min() > Long.MIN_VALUE && range.max() < Long.MAX_VALUE) {
                 messageId = maxAndMinMessageId;
-            } else if (range.min() > Double.NEGATIVE_INFINITY) {
+            } else if (range.min() > Long.MIN_VALUE) {
                 messageId = minMessageId;
             } else {
                 messageId = maxMessageId;
@@ -163,32 +160,37 @@ public class NumberRangeValidator implements DirectCallableValidator {
     }
 
     /**{@inheritDoc}*/
-    public <T> boolean validate(ValidationContext<T>       context,
-                                String                     propertyName,
-                                Object                     propertyDisplayName,
+    @Override
+    public <T> boolean validate(final ValidationContext<T>       context,
+                                final String                     propertyName,
+                                final Object                     propertyDisplayName,
                                 final Map<String, Object>  params,
-                                Object                     value) {
+                                final Object                     value) {
 
-        NumberRange annotation = new NumberRange() {
+        final NumberRange annotation = new NumberRange() {
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return NumberRange.class;
             }
 
-            public double min() {
-                Double min = (Double) params.get("min");
-                return (min == null) ? Double.NEGATIVE_INFINITY
+            @Override
+            public long min() {
+                final Long min = (Long) params.get("min");
+                return (min == null) ? Long.MIN_VALUE
                                      : min;
             }
 
-            public double max() {
-                Double max = (Double) params.get("max");
-                return (max == null) ? Double.POSITIVE_INFINITY
+            @Override
+            public long max() {
+                final Long max = (Long) params.get("max");
+                return (max == null) ? Long.MAX_VALUE
                                      : max;
             }
 
+            @Override
             public String messageId() {
-                String messageId = (String) params.get("messageId");
+                final String messageId = (String) params.get("messageId");
                 return StringUtil.isNullOrEmpty(messageId) ? ""
                                                            : messageId;
             }

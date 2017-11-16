@@ -39,8 +39,8 @@ public class NumberRangeValidatorTest {
 
     @Before
     public void setUpClass() {
-        XmlComponentDefinitionLoader loader = new XmlComponentDefinitionLoader("nablarch/core/validation/convertor-test-base.xml");
-        DiContainer container = new DiContainer(loader);
+        final XmlComponentDefinitionLoader loader = new XmlComponentDefinitionLoader("nablarch/core/validation/convertor-test-base.xml");
+        final DiContainer container = new DiContainer(loader);
         SystemRepository.load(container);
 
         resource = container.getComponentByType(MockStringResourceHolder.class);
@@ -51,7 +51,7 @@ public class NumberRangeValidatorTest {
         testee.setMinMessageId("MSG00003");
 
 
-        Map<String, String[]> params = new HashMap<String, String[]>();
+        final Map<String, String[]> params = new HashMap<String, String[]>();
         
         params.put("param", new String[]{"10"});
 
@@ -61,22 +61,26 @@ public class NumberRangeValidatorTest {
 
     }
 
-    private NumberRange range = new NumberRange() {
+    private final NumberRange range = new NumberRange() {
         
+        @Override
         public Class<? extends Annotation> annotationType() {
             return NumberRange.class;
         }
         
-        public double min() {
-            return 10.0;
+        @Override
+        public long min() {
+            return 10;
         }
         
+        @Override
         public String messageId() {
             return "";
         }
         
-        public double max() {
-            return 20.1;
+        @Override
+        public long max() {
+            return 20;
         }
     };
 
@@ -102,7 +106,7 @@ public class NumberRangeValidatorTest {
         
         assertEquals(1, context.getMessages().size());
         ThreadContext.setLanguage(Locale.JAPANESE);
-        assertEquals("PROP0001は10以上20.1以下で入力してください。", context.getMessages().get(0).formatMessage());
+        assertEquals("PROP0001は10以上20以下で入力してください。", context.getMessages().get(0).formatMessage());
     }
 
     @Test
@@ -112,7 +116,7 @@ public class NumberRangeValidatorTest {
         
         assertEquals(1, context.getMessages().size());
         ThreadContext.setLanguage(Locale.JAPANESE);
-        assertEquals("PROP0001は10以上20.1以下で入力してください。", context.getMessages().get(0).formatMessage());
+        assertEquals("PROP0001は10以上20以下で入力してください。", context.getMessages().get(0).formatMessage());
     }
 
     @Test
@@ -122,7 +126,7 @@ public class NumberRangeValidatorTest {
         
         assertEquals(1, context.getMessages().size());
         ThreadContext.setLanguage(Locale.JAPANESE);
-        assertEquals("PROP0001は10以上20.1以下で入力してください。", context.getMessages().get(0).formatMessage());
+        assertEquals("PROP0001は10以上20以下で入力してください。", context.getMessages().get(0).formatMessage());
     }
 
     @Test
@@ -131,10 +135,10 @@ public class NumberRangeValidatorTest {
         assertFalse(testee.validate(context, "param", "PROP0001", range, 20.2));
         assertEquals(1, context.getMessages().size());
         ThreadContext.setLanguage(Locale.JAPANESE);
-        assertEquals("PROP0001は10以上20.1以下で入力してください。", context.getMessages().get(0).formatMessage());
+        assertEquals("PROP0001は10以上20以下で入力してください。", context.getMessages().get(0).formatMessage());
 
         assertFalse(testee.validate(context, "param", "PROP0001", new HashMap<String, Object>() {{
-            put("max", 20.1);
+            put("max", 20L);
         }}, 20.2));
         assertEquals(2, context.getMessages().size());
         assertEquals(context.getMessages().get(0).formatMessage(), context.getMessages().get(0).formatMessage());
@@ -147,26 +151,30 @@ public class NumberRangeValidatorTest {
         
         assertEquals(1, context.getMessages().size());
         ThreadContext.setLanguage(Locale.JAPANESE);
-        assertEquals("PROP0001は10以上20.1以下で入力してください。", context.getMessages().get(0).formatMessage());
+        assertEquals("PROP0001は10以上20以下で入力してください。", context.getMessages().get(0).formatMessage());
     }
 
 
-    private NumberRange lesserRange = new NumberRange() {
+    private final NumberRange lesserRange = new NumberRange() {
         
+        @Override
         public Class<? extends Annotation> annotationType() {
             return NumberRange.class;
         }
         
-        public double min() {
+        @Override
+        public long min() {
             return 10;
         }
         
+        @Override
         public String messageId() {
             return "";
         }
         
-        public double max() {
-            return Double.POSITIVE_INFINITY;
+        @Override
+        public long max() {
+            return Long.MAX_VALUE;
         }
     };
 
@@ -221,7 +229,7 @@ public class NumberRangeValidatorTest {
 
 
         assertFalse(testee.validate(context, "param", "PROP0001", new HashMap<String, Object>() {{
-            put("min", 10.1);
+            put("min", 10L);
         }}, 9.9f));
         assertEquals(2, context.getMessages().size());
         assertEquals(context.getMessages().get(0).formatMessage(), context.getMessages().get(0).formatMessage());
@@ -237,21 +245,25 @@ public class NumberRangeValidatorTest {
 
     @Test
     public void testValidateGreater() {
-        NumberRange range = new NumberRange() {
+        final NumberRange range = new NumberRange() {
             
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return NumberRange.class;
             }
             
-            public double min() {
-                return Double.NEGATIVE_INFINITY;
+            @Override
+            public long min() {
+                return Long.MIN_VALUE;
             }
             
+            @Override
             public String messageId() {
                 return "";
             }
             
-            public double max() {
+            @Override
+            public long max() {
                 return 20;
             }
         };
@@ -263,21 +275,25 @@ public class NumberRangeValidatorTest {
         assertEquals("PROP0001は20以下で入力してください。", context.getMessages().get(0).formatMessage());
     }
 
-    private NumberRange range03 = new NumberRange() {
+    private final NumberRange range03 = new NumberRange() {
         
+        @Override
         public Class<? extends Annotation> annotationType() {
             return NumberRange.class;
         }
         
-        public double min() {
+        @Override
+        public long min() {
             return 10;
         }
         
+        @Override
         public String messageId() {
         	return "MSG00004";
         }
         
-        public double max() {
+        @Override
+        public long max() {
             return 20;
         }
     };
@@ -294,21 +310,25 @@ public class NumberRangeValidatorTest {
 
     @Test
     public void testValidateGreaterAnnotationMessage() {
-        NumberRange range = new NumberRange() {
+        final NumberRange range = new NumberRange() {
             
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return NumberRange.class;
             }
             
-            public double min() {
+            @Override
+            public long min() {
                 return Long.MIN_VALUE;
             }
             
+            @Override
             public String messageId() {
                 return "MSG00004";
             }
             
-            public double max() {
+            @Override
+            public long max() {
                 return 20;
             }
         };
@@ -320,8 +340,8 @@ public class NumberRangeValidatorTest {
         assertEquals("テストメッセージ01", context.getMessages().get(0).formatMessage());
 
         assertFalse(testee.validate(context, "param", "PROP0001", new HashMap<String, Object>() {{
-            put("min", 0D);
-            put("max", 20D);
+            put("min", 0L);
+            put("max", 20L);
             put("messageId", "MSG00004");
         }}, 211));
         assertEquals(2, context.getMessages().size());
@@ -331,22 +351,26 @@ public class NumberRangeValidatorTest {
 
     @Test
     public void testValidateMaxNotSpecified() {
-        NumberRange range = new NumberRange() {
+        final NumberRange range = new NumberRange() {
             
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return NumberRange.class;
             }
             
-            public double min() {
-                return Double.NEGATIVE_INFINITY;
+            @Override
+            public long min() {
+                return Long.MIN_VALUE;
             }
             
+            @Override
             public String messageId() {
                 return "MSG00004";
             }
             
-            public double max() {
-                return Double.POSITIVE_INFINITY;
+            @Override
+            public long max() {
+                return Long.MAX_VALUE;
             }
         };
 

@@ -35,6 +35,11 @@
                     <property name="maxAndMinMessageId" value="MSG00052"/>
                     <property name="minMessageId" value="MSG00053"/>
                 </component>
+                <component class="nablarch.core.validation.validator.DecimalRangeValidator">
+                  <property name="maxMessageId" value="MSG00051" />
+                  <property name="maxAndMinMessageId" value="MSG00052" />
+                  <property name="minMessageId" value="MSG00053" />
+                </component>
                 <component class="nablarch.core.validation.validator.LengthValidator">
                     <property name="maxMessageId" value="MSG00021"/>
                     <property name="maxAndMinMessageId" value="MSG00022"/>
@@ -92,6 +97,11 @@
                     <property name="maxMessageId" value="MSG00051"/>
                     <property name="maxAndMinMessageId" value="MSG00052"/>
                     <property name="minMessageId" value="MSG00053"/>
+                </component>
+                <component class="nablarch.core.validation.validator.DecimalRangeValidator">
+                  <property name="maxMessageId" value="MSG00051" />
+                  <property name="maxAndMinMessageId" value="MSG00052" />
+                  <property name="minMessageId" value="MSG00053" />
                 </component>
                 <component class="nablarch.core.validation.validator.LengthValidator">
                     <property name="maxMessageId" value="MSG00021"/>

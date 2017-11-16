@@ -42,8 +42,8 @@ public class EntityValidationDefinitionTest {
         assertTrue(required1 != null);
         assertEquals(10, length1.max());
         assertEquals("test", format.value());
-        assertThat(range.min(), is(0.0));
-        assertThat(range.max(), is(10.0));
+        assertThat(range.min(), is(0L));
+        assertThat(range.max(), is(10L));
 
         assertEquals("message02", messageId2);
         assertTrue(required2 != null);
