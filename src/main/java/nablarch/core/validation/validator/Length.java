@@ -12,6 +12,7 @@ import nablarch.core.validation.Validation;
  * 指定された範囲内の文字列長であることを表すアノテーション。
  * <br/>
  * 入力値がnull又は空文字の場合は、validと判定する。
+ * 文字列長の計算はサロゲートペアを考慮して行われる。
  *
  * @author Koichi Asano
  */
