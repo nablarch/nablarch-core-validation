@@ -287,4 +287,29 @@ public class LengthValidatorTest {
     public void testGetAnnotationClass() {
     	assertEquals(Length.class, testee.getAnnotationClass());
     }
+
+    /**
+     * サロゲートペアを含む文字列の長さがmaxを超えた場合
+     */
+    @Test
+    public void testValidateLongerWithSurrogatePair() {
+        assertFalse(testee.validate(context, "param", "PROP0001", length, "1234567890\uD867\uDE3D"));
+    }
+
+    /**
+     * サロゲートペアを含む文字列の長さがminを下回った場合
+     */
+    @Test
+    public void testValidateShorterWithSurrogatePair() {
+        assertFalse(testee.validate(context, "param", "PROP0001", length, "123\uD867\uDE3D"));
+    }
+
+    /**
+     * サロゲートペアを含む文字列の長さが妥当な場合
+     */
+    @Test
+    public void testValidateSuccessWithSurrogatePair() {
+        assertTrue("Just max", testee.validate(context, "param", "PROP0001", length, "123456789\uD867\uDE3D"));
+        assertTrue("Just min", testee.validate(context, "param", "PROP0001", length, "1234\uD867\uDE3D"));
+    }
 }
