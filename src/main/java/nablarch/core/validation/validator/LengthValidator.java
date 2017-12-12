@@ -77,14 +77,14 @@ public class LengthValidator extends StringValidatorSupport<Length> {
             return true;
         }
         if (length.min() > 0) {
-            if (value.length() < length.min()) {
+            if (value.codePointCount(0, value.length()) < length.min()) {
                 addMessage(context, propertyName, propertyDisplayName, length);
                 return false;
             }
         }
 
         if (length.max() > 0) {
-            if (value.length() > length.max()) {
+            if (value.codePointCount(0, value.length()) > length.max()) {
                 addMessage(context, propertyName, propertyDisplayName, length);
                 return false;
             }
