@@ -10,6 +10,8 @@ import nablarch.core.validation.ValidationResultMessageUtil;
 
 /**
  * 文字列長をチェックするクラス。
+ * <br/>
+ * 文字列長の計算はサロゲートペアを考慮して行われる。
  * 
  * @author Koichi Asano
  *
