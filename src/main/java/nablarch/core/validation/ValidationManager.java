@@ -91,10 +91,8 @@ public class ValidationManager implements Initializable {
      * メッセージリソースをセットする。
      *
      * @param stringResourceHolder メッセージリソース
-     * @deprecated 本プロパティは、仕様変更に伴い使用しなくなりました。(値を設定しても、意味が無い)
      */
-    @IgnoreProperty("MessageUtilのメッセージリソースを使用するよう仕様変更を行ったため本プロパティは廃止")
-    @Deprecated
+    @IgnoreProperty("MessageUtilのメッセージリソースを使用するよう仕様変更を行ったため本プロパティは廃止しました。(値を設定しても意味がありません)")
     public void setMessageResource(StringResourceHolder stringResourceHolder) {
     }
 
