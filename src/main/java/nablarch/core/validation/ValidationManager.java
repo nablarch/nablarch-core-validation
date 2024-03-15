@@ -90,6 +90,8 @@ public class ValidationManager implements Initializable {
     /**
      * メッセージリソースをセットする。
      *
+     * <p><b>MessageUtilのメッセージリソースを使用するよう仕様変更を行ったため本プロパティは廃止しました。(値を設定しても意味がありません)</b>
+     *
      * @param stringResourceHolder メッセージリソース
      */
     @IgnoreProperty("MessageUtilのメッセージリソースを使用するよう仕様変更を行ったため本プロパティは廃止しました。(値を設定しても意味がありません)")
