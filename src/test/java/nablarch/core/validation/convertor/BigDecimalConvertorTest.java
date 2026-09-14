@@ -107,8 +107,8 @@ public class BigDecimalConvertorTest {
         assertTrue(testee.isConvertible(context, "param", "PROP0001", "-10.01", digits));
 
         // Integerを指定した場合。
-        assertTrue(testee.isConvertible(context, "param", "PROP0001", new Integer("10"), digits));
-        assertTrue(testee.isConvertible(context, "param", "PROP0001", new Integer("-10"), digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", Integer.valueOf("10"), digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", Integer.valueOf("-10"), digits));
 
         // nullを指定した場合
         assertFalse(testee.isConvertible(context, "param", "PROP0001", null, digits));
@@ -146,8 +146,8 @@ public class BigDecimalConvertorTest {
         assertTrue(testee.isConvertible(context, "param", "PROP0001", "-10,01", digits));
 
         // Integerを指定した場合。
-        assertTrue(testee.isConvertible(context, "param", "PROP0001", new Integer("10"), digits));
-        assertTrue(testee.isConvertible(context, "param", "PROP0001", new Integer("-10"), digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", Integer.valueOf("10"), digits));
+        assertTrue(testee.isConvertible(context, "param", "PROP0001", Integer.valueOf("-10"), digits));
 
         // nullを指定した場合
         assertFalse(testee.isConvertible(context, "param", "PROP0001", null, digits));
@@ -269,9 +269,9 @@ public class BigDecimalConvertorTest {
 
         // Integerを指定した場合。
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer("10"), digits));
+                Integer.valueOf("10"), digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer("-10"), digits));
+                Integer.valueOf("-10"), digits));
 
         // nullを指定した場合
         assertTrue(testee.isConvertible(context, "param", "PROP0001", null, digits));
@@ -585,25 +585,25 @@ public class BigDecimalConvertorTest {
         // Integerを指定
         //**********************************************************************
         assertEquals(new BigDecimal("10"),
-                testee.convert(context, "param", new Integer("10"), null));
+                testee.convert(context, "param", Integer.valueOf("10"), null));
         assertEquals(new BigDecimal("10000"),
-                testee.convert(context, "param", new Integer("10000"), null));
+                testee.convert(context, "param", Integer.valueOf("10000"), null));
         assertEquals(new BigDecimal("-10"),
-                testee.convert(context, "param", new Integer("-10"), null));
+                testee.convert(context, "param", Integer.valueOf("-10"), null));
         assertEquals(new BigDecimal("-10000"),
-                testee.convert(context, "param", new Integer("-10000"), null));
+                testee.convert(context, "param", Integer.valueOf("-10000"), null));
 
         //**********************************************************************
         // Longを指定
         //**********************************************************************
         assertEquals(new BigDecimal("10"),
-                testee.convert(context, "param", new Long("10"), null));
+                testee.convert(context, "param", Long.valueOf("10"), null));
         assertEquals(new BigDecimal("10000"),
-                testee.convert(context, "param", new Long("10000"), null));
+                testee.convert(context, "param", Long.valueOf("10000"), null));
         assertEquals(new BigDecimal("-10"),
-                testee.convert(context, "param", new Long("-10"), null));
+                testee.convert(context, "param", Long.valueOf("-10"), null));
         assertEquals(new BigDecimal("-10000"),
-                testee.convert(context, "param", new Long("-10000"), null));
+                testee.convert(context, "param", Long.valueOf("-10000"), null));
 
         //**********************************************************************
         // BigDecimalを指定
@@ -730,25 +730,25 @@ public class BigDecimalConvertorTest {
         // Integerを指定
         //**********************************************************************
         assertEquals(new BigDecimal("10"),
-                testee.convert(context, "param", new Integer("10"), null));
+                testee.convert(context, "param", Integer.valueOf("10"), null));
         assertEquals(new BigDecimal("10000"),
-                testee.convert(context, "param", new Integer("10000"), null));
+                testee.convert(context, "param", Integer.valueOf("10000"), null));
         assertEquals(new BigDecimal("-10"),
-                testee.convert(context, "param", new Integer("-10"), null));
+                testee.convert(context, "param", Integer.valueOf("-10"), null));
         assertEquals(new BigDecimal("-10000"),
-                testee.convert(context, "param", new Integer("-10000"), null));
+                testee.convert(context, "param", Integer.valueOf("-10000"), null));
 
         //**********************************************************************
         // Longを指定
         //**********************************************************************
         assertEquals(new BigDecimal("10"),
-                testee.convert(context, "param", new Long("10"), null));
+                testee.convert(context, "param", Long.valueOf("10"), null));
         assertEquals(new BigDecimal("10000"),
-                testee.convert(context, "param", new Long("10000"), null));
+                testee.convert(context, "param", Long.valueOf("10000"), null));
         assertEquals(new BigDecimal("-10"),
-                testee.convert(context, "param", new Long("-10"), null));
+                testee.convert(context, "param", Long.valueOf("-10"), null));
         assertEquals(new BigDecimal("-10000"),
-                testee.convert(context, "param", new Long("-10000"), null));
+                testee.convert(context, "param", Long.valueOf("-10000"), null));
 
         //**********************************************************************
         // BigDecimalを指定
