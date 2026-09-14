@@ -175,17 +175,17 @@ public class IntegerConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(10), digits));
+                Integer.valueOf(10), digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(-10), digits));
+                Integer.valueOf(-10), digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(123456789), maxLengthDigits));
+                Integer.valueOf(123456789), maxLengthDigits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Long(123456789), maxLengthDigits));
+                Long.valueOf(123456789), maxLengthDigits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
                 new BigDecimal("123456789"), maxLengthDigits));
         assertFalse(testee.isConvertible(context, "param", "PROP0001",
-                new Long(1234567890), maxLengthDigits));
+                Long.valueOf(1234567890), maxLengthDigits));
 
         //**********************************************************************
         // nullのテスト
@@ -373,17 +373,17 @@ public class IntegerConvertorTest {
                 "", TestTarget.class, new ReflectionFormCreator(),
                 params, "");
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(10), digits));
+                Integer.valueOf(10), digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(-10), digits));
+                Integer.valueOf(-10), digits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Integer(123456789), maxLengthDigits));
+                Integer.valueOf(123456789), maxLengthDigits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
-                new Long(123456789), maxLengthDigits));
+                Long.valueOf(123456789), maxLengthDigits));
         assertTrue(testee.isConvertible(context, "param", "PROP0001",
                 new BigDecimal("123456789"), maxLengthDigits));
         assertFalse(testee.isConvertible(context, "param", "PROP0001",
-                new Long(1234567890), maxLengthDigits));
+                Long.valueOf(1234567890), maxLengthDigits));
 
         //**********************************************************************
         // nullのテスト
@@ -418,10 +418,10 @@ public class IntegerConvertorTest {
         Integer i = (Integer) testee.convert(context, "param", new String[]{"10"}, digits);
         assertEquals(Integer.valueOf(10), i);
 
-        Integer i2 = (Integer) testee.convert(context, "param", new Integer(10), digits);
+        Integer i2 = (Integer) testee.convert(context, "param", Integer.valueOf(10), digits);
         assertEquals(Integer.valueOf(10), i2);
 
-        Integer i3 = (Integer) testee.convert(context, "param", new Integer(Integer.MAX_VALUE), digits);
+        Integer i3 = (Integer) testee.convert(context, "param", Integer.valueOf(Integer.MAX_VALUE), digits);
         assertEquals(Integer.valueOf(Integer.MAX_VALUE), i3);
 
     }
@@ -650,7 +650,7 @@ public class IntegerConvertorTest {
                 params, "");
 
         // Stringを指定した場合に、u0020以下の文字（半角スペース、改行コード、タブ、null文字など）がトリムされることの確認
-        assertEquals(new Integer("10"), testee.convert(context, "param", "   \0\r\n\t10   \r\n\t\0", null));
+        assertEquals(Integer.valueOf("10"), testee.convert(context, "param", "   \0\r\n\t10   \r\n\t\0", null));
 
         // Stringを指定した場合に、全角スペースがトリムされないためBigDecimalへの変換に失敗し、nullが返却されることの確認
         assertNull(testee.convert(context, "param", "　　　10　　　", null));

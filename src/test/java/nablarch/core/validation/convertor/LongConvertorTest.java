@@ -602,7 +602,7 @@ public class LongConvertorTest {
                 params, "");
 
         // Stringを指定した場合に、u0020以下の文字（半角スペース、改行コード、タブ、null文字など）がトリムされることの確認
-        assertEquals(new Long("10"), testee.convert(context, "param", "   \0\r\n\t10   \r\n\t\0", null));
+        assertEquals(Long.valueOf("10"), testee.convert(context, "param", "   \0\r\n\t10   \r\n\t\0", null));
 
         // Stringを指定した場合に、全角スペースがトリムされないためBigDecimalへの変換に失敗し、nullが返却されることの確認
         assertNull(testee.convert(context, "param", "　　　10　　　", null));
